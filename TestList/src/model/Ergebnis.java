@@ -1,8 +1,5 @@
 package model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Ergebnis {
     public Ergebnis(Projekt projekt, Mitarbeiter mitarbeiter, double gesamtZeit) {
         setProjekt(projekt);

@@ -17,8 +17,6 @@ public class Main {
     public static List<Ergebnis> werteAuflisten(List<Zeiten> zeiten){
         List<Ergebnis> ergebnisse = new ArrayList();
 
-        Map<Mitarbeiter, Map<Projekt, Double>> ergebnisseMap = new HashMap<>();
-
         zeiten.stream().forEach(zeit -> {
             int currentMitId = zeit.getMitarbeiter().getId();
             int currentProjId = zeit.getProjekt().getId();
@@ -45,7 +43,7 @@ public class Main {
     public static double gesamtZeitErrechnen(Date start, Date stopp){
         final int MILLI_TO_HOUR = 1000 * 60 * 60;
         long diff = (stopp.getTime() - start.getTime());
-        return (double) (stopp.getTime() - start.getTime()) / MILLI_TO_HOUR;
+        return (double) diff / MILLI_TO_HOUR;
     }
 
     public static List<Zeiten> datenErstellen(){
