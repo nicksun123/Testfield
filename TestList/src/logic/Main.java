@@ -5,6 +5,7 @@ import model.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.*;
@@ -21,46 +22,70 @@ public class Main {
 //                ergebnis.getMitarbeiter().getName(), ergebnis.getProjekt().getName(), ergebnis.getGesamtZeit()));
     }
 
-    public static List<Ergebnis> werteAuflisten(List<Zeiten> zeiten){
-        List<Ergebnis> ergebnisse = new ArrayList();
+    public static List<ErgebnisZeitProMitarbeiter> ermittleZeit(List<Zeiten> zeiten, YearMonth yearMonth){
+        List<ErgebnisZeitProMitarbeiter> ergebnisse = new ArrayList<>();
+//        int adjustMonthBase = 1;
+//        int adjustYearBase = 1990;
 
-        zeiten.stream().forEach(zeit -> {
-            int currentMitId = zeit.getMitarbeiter().getId();
-            int currentProjId = zeit.getProjekt().getId();
-            double gesamtZeit = gesamtZeitErrechnen(zeit.getStart(), zeit.getStopp());
-            boolean ergebnisErstellt = false;
+        //Summe der Sets ermitteln und gegen >= 3 Stunden pruefen
+        List<Set<Zeiten>> zusammenfassung = zeiten.stream()
+                .filter(zeit -> convertToLocalDateTime(zeit.getStart()).getMonthValue() == yearMonth.getMonthValue()
+                        && convertToLocalDateTime(zeit.getStart()).getYear() == yearMonth.getYear()) //Nach gewuenschten Monat filtern
+                .collect(groupingBy(Zeiten::getHashKey, toSet()))//Nach Hash Key buendeln
+                .entrySet().stream()
+                .map(entry -> entry.getValue()) //Stream aus Set<Zeiten> erstellen
+                .filter(set -> set.stream().mapToLong(setElement -> setElement.gesamtZeit()).sum() >= 3)
+                .collect(toList());
 
-            for (Ergebnis ergebnis : ergebnisse) {
-                if (ergebnis != null) {
-                    if (ergebnis.getMitarbeiter().getId() == currentMitId
-                            && ergebnis.getProjekt().getId() == currentProjId) {
-                        ergebnis.setGesamtZeit(gesamtZeit);
-                        ergebnisErstellt = true;
-                    }
-                }
+        //System.out.println(zusammenfassung);
+
+        zusammenfassung.forEach(set -> {
+            Mitarbeiter currentMitarbeiter = null;
+            long gesamtZeit = 0;
+
+            for (Zeiten zeit : set) {
+                currentMitarbeiter = zeit.getMitarbeiter();
+                gesamtZeit += zeit.gesamtZeit();
             }
-
-            if (!ergebnisErstellt){
-                ergebnisse.add(new Ergebnis(zeit.getProjekt(),  zeit.getMitarbeiter(), gesamtZeit));
-            }
+            ergebnisse.add(new ErgebnisZeitProMitarbeiter(currentMitarbeiter, gesamtZeit));
         });
+
+//        ergebnisse.add(zusammenfassung.stream().filter(set -> set.stream().mapToLong(s -> s.gesamtZeit()).sum();
+//        );)
+
         return ergebnisse;
     }
 
-    public static List<ErgebnisZeitProMitarbeiter> ermittleZeit(List<Zeiten> zeiten, YearMonth yearMonth){
-        zeiten.stream()
-                .filter(zeit -> zeit.getStart().getMonth() == yearMonth.getMonthValue()
-                        && zeit.getStart().getYear() == yearMonth.getYear()) //Nach gewuenschten Monat filtern
-                .collect(groupingBy(Zeiten::getHashKey, toSet()))//Nach Hash Key buendeln
-                .entrySet().stream()
-                .map(e -> e.getValue()) //Entries einen Set zuordnen
-                .filter(summarizingLong(Zeiten::gesamtZeit) >= 3) //Summe der Sets ermitteln und gegen >= 3 Stunden pruefen
-                ;
-
-        //
-
-        return null;
+    public static LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
+        return timestamp.toLocalDateTime();
     }
+
+//    public static List<Ergebnis> werteAuflisten(List<Zeiten> zeiten){
+//        List<Ergebnis> ergebnisse = new ArrayList();
+//
+//        zeiten.stream().forEach(zeit -> {
+//            int currentMitId = zeit.getMitarbeiter().getId();
+//            int currentProjId = zeit.getProjekt().getId();
+//            double gesamtZeit = gesamtZeitErrechnen(zeit.getStart(), zeit.getStopp());
+//            boolean ergebnisErstellt = false;
+//
+//            for (Ergebnis ergebnis : ergebnisse) {
+//                if (ergebnis != null) {
+//                    if (ergebnis.getMitarbeiter().getId() == currentMitId
+//                            && ergebnis.getProjekt().getId() == currentProjId) {
+//                        ergebnis.setGesamtZeit(gesamtZeit);
+//                        ergebnisErstellt = true;
+//                    }
+//                }
+//            }
+//
+//            if (!ergebnisErstellt){
+//                ergebnisse.add(new Ergebnis(zeit.getProjekt(),  zeit.getMitarbeiter(), gesamtZeit));
+//            }
+//        });
+//        return ergebnisse;
+
+//    }
 
     public static double gesamtZeitErrechnen(Date start, Date stopp){
         final int MILLI_TO_HOUR = 1000 * 60 * 60;
@@ -100,14 +125,14 @@ public class Main {
         erstellteZeiten.add(new Zeiten(9,"", Timestamp.valueOf("2023-03-03 09:00:00.0"),
                 Timestamp.valueOf("2023-03-03 17:00:00.0"), metallGmbh, babo));
 
-        erstellteZeiten.add(new Zeiten(1,"", Timestamp.valueOf("2023-03-01 10:00:00.0"),
+        erstellteZeiten.add(new Zeiten(10,"", Timestamp.valueOf("2023-03-01 10:00:00.0"),
                 Timestamp.valueOf("2023-03-01 18:00:00.0"), autoGmbh, nico));
 
-        erstellteZeiten.add(new Zeiten(1,"", Timestamp.valueOf("2023-03-01 10:00:00.0"),
+        erstellteZeiten.add(new Zeiten(11,"", Timestamp.valueOf("2023-03-01 10:00:00.0"),
                 Timestamp.valueOf("2023-03-01 15:30:00.0"), metallGmbh, chabo));
 
-        erstellteZeiten.add(new Zeiten(1,"", Timestamp.valueOf("2023-03-01 10:00:00.0"),
-                Timestamp.valueOf("2023-03-01 19:30:00.0"), autoGmbh, babo));
+        erstellteZeiten.add(new Zeiten(12,"", Timestamp.valueOf("2023-03-01 10:00:00.0"),
+                Timestamp.valueOf("2023-03-01 11:30:00.0"), autoGmbh, babo));
 
         return erstellteZeiten;
     }
