@@ -1,11 +1,10 @@
 package model;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
-public class Zeiten {
-    public Zeiten(int id, String beschreibung, Timestamp  start, Timestamp  stopp,
-                  Projekt projekt, Mitarbeiter mitarbeiter) {
+public class ZeitenOld {
+    public ZeitenOld(int id, String beschreibung, Date start, Date stopp,
+                     Projekt projekt, Mitarbeiter mitarbeiter) {
         setId(id);
         setBeschreibung(beschreibung);
         setStart(start);
@@ -19,8 +18,8 @@ public class Zeiten {
     private int id;
     private String beschreibung;
 
-    private Timestamp  start;
-    private Timestamp  stopp;
+    private Date start;
+    private Date stopp;
 
     public Projekt getProjekt() {
         return projekt;
@@ -46,19 +45,19 @@ public class Zeiten {
         this.id = id;
     }
 
-    public Timestamp getStart() {
+    public Date getStart() {
         return start;
     }
 
-    public void setStart(Timestamp  start) {
+    public void setStart(Date start) {
         this.start = start;
     }
 
-    public Timestamp  getStopp() {
+    public Date getStopp() {
         return stopp;
     }
 
-    public void setStopp(Timestamp  stopp) {
+    public void setStopp(Date stopp) {
         this.stopp = stopp;
     }
 
@@ -68,13 +67,5 @@ public class Zeiten {
 
     public void setBeschreibung(String beschreibung) {
         this.beschreibung = beschreibung;
-    }
-
-    public String getHashKey(){
-        return getMitarbeiter().getId() + "_" + getProjekt().getId();
-    }
-
-    public long gesamtZeit(){
-        return (getStopp().getTime() - getStart().getTime()) / 1000 / 60 / 60;
     }
 }
