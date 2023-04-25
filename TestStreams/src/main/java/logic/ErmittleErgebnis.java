@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors.*;
 
 import static java.util.stream.Collectors.*;
@@ -47,6 +48,23 @@ public class ErmittleErgebnis {
             }
             ergebnisse.add(new ErgebnisZeitProMitarbeiter(currentMitarbeiter, currentProjekt, gesamtZeit));
         });
+
+//        zusammenfassung.stream().flatMap(
+//                zeitenSet -> {
+//                    AtomicReference<Mitarbeiter> currentMitarbeiter = null;
+//                    AtomicReference<Projekt> currentProjekt = null;
+//                    long gesamtZeit = 0;
+//
+//                    gesamtZeit += zeitenSet.stream().mapToLong(zeit -> {
+//                        currentMitarbeiter.set(zeit.getMitarbeiter());
+//                        currentProjekt.set(zeit.getProjekt());
+//                        return zeit.gesamtZeit();
+//                    }).sum();
+//
+//                    ergebnisse.add(new ErgebnisZeitProMitarbeiter(currentMitarbeiter.get(), currentProjekt.get(), gesamtZeit));
+//                    return null;
+//                }
+//        );
 
         return ergebnisse;
     }
