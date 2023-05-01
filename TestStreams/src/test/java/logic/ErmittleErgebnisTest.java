@@ -1,23 +1,40 @@
 package logic;
 
+import model.ErgebnisZeitProMitarbeiter;
 import model.Mitarbeiter;
 import model.Projekt;
 import model.Zeiten;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class ErmittleErgebnisTest {
 
+    @Spy
+    ErmittleErgebnis ermittleErgebnis;
+
     @org.junit.jupiter.api.Test
-    void ermittleZeit() {
+    void TEST_ermittleZeit_WITH_valid_data_EXPECT_correct_output() {
+        List<ErgebnisZeitProMitarbeiter> zusammenfassung = ermittleErgebnis.ermittleZeit(datenErstellen(), YearMonth.of(2023, Month.MARCH));
+    assertEquals(5, zusammenfassung.size());
     }
 
     @org.junit.jupiter.api.Test
-    void convertToLocalDateTime() {
+    void TEST_convertToLocalDateTime_WITH_valid_date_EXPECT_correct_output() {
+        LocalDateTime expectedTime = LocalDateTime.of(2023, Month.MARCH, 1, 10, 0, 0); ;
+        LocalDateTime time = ermittleErgebnis.convertToLocalDateTime(Timestamp.valueOf("2023-03-01 10:00:00.0"));
+        assertTrue(time.equals(expectedTime));
     }
 
     List<Zeiten> datenErstellen() {
