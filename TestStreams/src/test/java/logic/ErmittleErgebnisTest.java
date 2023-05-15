@@ -6,6 +6,7 @@ import model.Projekt;
 import model.Zeiten;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ErmittleErgebnisTest {
@@ -24,16 +27,46 @@ class ErmittleErgebnisTest {
     @Spy
     ErmittleErgebnis ermittleErgebnis;
 
+    @Mock
+    List<String> testList;
+
+    @org.junit.jupiter.api.Test
+    void TEST_testlist_WHEN_mocked() {
+        //prepare
+        when(testList.get(anyInt())).thenReturn("test text");
+        //execute
+
+        //assert
+        assertEquals("test text", testList.get(0));
+    }
+
     @org.junit.jupiter.api.Test
     void TEST_ermittleZeit_WITH_valid_data_EXPECT_correct_output() {
-        List<ErgebnisZeitProMitarbeiter> zusammenfassung = ermittleErgebnis.ermittleZeit(datenErstellen(), YearMonth.of(2023, Month.MARCH));
-    assertEquals(5, zusammenfassung.size());
+        //prepare
+        //execute
+        List<ErgebnisZeitProMitarbeiter> zusammenfassung = ermittleErgebnis.ermittleZeit(
+                datenErstellen(), YearMonth.of(2023, Month.MARCH));
+        ermittleErgebnis.ermittleZeit(
+                datenErstellen(), YearMonth.of(2023, Month.MARCH));
+
+        //assert
+//        verify(ermittleErgebnis).ermittleZeit(any(), any());
+        verify(ermittleErgebnis, times(2)).ermittleZeit(anyList(), eq(YearMonth.of(2023, Month.MARCH)));
+        verify(ermittleErgebnis, times(2)).ermittleZeit(any(), any());
+        verify(ermittleErgebnis, atLeast(1)).ermittleZeit(any(), any());
+        verify(ermittleErgebnis, atLeastOnce()).ermittleZeit(any(), any());
+        verify(ermittleErgebnis, atMost(5)).ermittleZeit(any(), any());
+//        verify(ermittleErgebnis, never()).ermittleZeit(any(), any());
+        assertEquals(5, zusammenfassung.size());
     }
 
     @org.junit.jupiter.api.Test
     void TEST_convertToLocalDateTime_WITH_valid_date_EXPECT_correct_output() {
+        //prepare
         LocalDateTime expectedTime = LocalDateTime.of(2023, Month.MARCH, 1, 10, 0, 0); ;
+        //execute
         LocalDateTime time = ermittleErgebnis.convertToLocalDateTime(Timestamp.valueOf("2023-03-01 10:00:00.0"));
+        //assert
         assertTrue(time.equals(expectedTime));
     }
 

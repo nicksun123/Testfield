@@ -41,3 +41,10 @@ public class ErmittleErgebnis {
         return timestamp.toLocalDateTime();
     }
 }
+
+//    Der Buchhalter eines Consultingunternehmen, will Rechnungen für den vergangenen Monat schreiben.
+//        Schreibe ein SQL was beispielhaft die folgende Ausgabe haben könnte:
+//        Timo 10 Stunden für Deutsche Bank
+//        Timo 30 Stunden für VW
+//        Maximilian 50 Stunden für Rhenag gearbeitet
+//        Es sollen nur Zeilen generiert werden pro Mitarbeiter und Kunde, bei dem mindestens 3 Stunden erreicht werden.
