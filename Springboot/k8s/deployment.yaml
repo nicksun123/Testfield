@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-deployment
+  namespace: spring-boot
+  labels:
+    app: spring-boot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-boot-deployment
+  template:
+    metadata:
+      name: spring-boot-deployment
+      labels:
+        app: spring-boot-deployment
+    spec:
+      containers:
+        - name: spring-boot-deployment
+          image: sha256:ef081a7ab861e3a91e1247589da899589ff6ec8b2e60b0ee5f1aea486e9b0fb7
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+      
