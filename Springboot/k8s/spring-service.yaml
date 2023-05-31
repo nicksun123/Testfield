@@ -5,7 +5,7 @@ metadata:
   namespace: spring-boot
 spec:
   selector:
-    app: spring-boot-service
+    app: spring-boot-deployment
   ports:
     - protocol: TCP
       port: 8080
