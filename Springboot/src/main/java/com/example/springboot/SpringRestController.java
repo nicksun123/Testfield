@@ -1,13 +1,22 @@
 package com.example.springboot;
 
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import io.jsonwebtoken.Jwts;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
+
 
 @RestController
 @RequestMapping("/testRest")
 public class SpringRestController {
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping("/")
     public String greeting() {
@@ -25,5 +34,16 @@ public class SpringRestController {
     @ResponseStatus(HttpStatus.OK)
     public String goodbye(@PathVariable("name") String name) {
         return "Goodbye " + name + "!";
+    }
+
+    @PostMapping("/userToken")
+    private String createToken() {
+        String jws = null;
+        try {
+            jws = jwtService.generateJwt("c123", null, "k123", null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return jws;
     }
 }
