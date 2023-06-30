@@ -1,5 +1,7 @@
-package com.example.springboot;
+package com.example.springboot.controller;
 
+import com.example.springboot.service.JwtService;
+import com.example.springboot.service.VaultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,9 @@ import java.io.IOException;
 public class SpringRestController {
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private VaultService vaultService;
+
 
     @GetMapping("/")
     public String greeting() {
@@ -37,5 +42,10 @@ public class SpringRestController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PostMapping("/login")
+    private void login() {
+        vaultService.readConfigs();
     }
 }

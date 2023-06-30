@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.example.springboot.service;
 
 import io.jsonwebtoken.Jwts;
 import org.bouncycastle.openssl.PEMKeyPair;
